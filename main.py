@@ -1,8 +1,7 @@
-import logging, os, asyncio
+import logging, asyncio
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
 from aiogram.types import LabeledPrice, PreCheckoutQuery, Message, WebAppInfo
-from aiohttp import web
 
 BOT_TOKEN = "8810572867:AAEleoFb5RH4BW7yY4MGimQOcN8H93dfY8Q"
 logging.basicConfig(level=logging.INFO)
@@ -24,25 +23,19 @@ async def prem_g(m: Message):
     await bot.send_invoice(m.chat.id, "Premium Tetris", "Unlock Tetris!", "payload", "", "XTR", [LabeledPrice("Pass", 5)])
 
 @dp.pre_checkout_query()
-async def pre_c(q: PreCheckoutQuery): 
+async def pre_c(q: PreCheckoutQuery):
     await bot.answer_pre_checkout_query(q.id, ok=True)
 
 @dp.message(F.successful_payment)
 async def succ_p(m: Message):
     await m.answer("🎉 **Unlocked!**", reply_markup=types.InlineKeyboardMarkup(inline_keyboard=[[types.InlineKeyboardButton(text="🔥 Launch Tetris", web_app=WebAppInfo(url="https://gamepix.com"))]]))
 
-async def h(r): 
-    return web.Response(text="OK")
-
 async def main():
-    app = web.Application()
-    app.router.add_get('/', h)
-    runner = web.AppRunner(app)
-    await runner.setup()
-    await web.TCPSite(runner, '0.0.0.0', int(os.environ.get("PORT", 10000))).start()
     await dp.start_polling(bot)
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
     asyncio.run(main())
+
+
 
 
